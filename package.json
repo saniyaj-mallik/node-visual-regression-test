@@ -1,0 +1,19 @@
+{
+  "name": "visual-regression-test",
+  "version": "1.0.0",
+  "description": "This is a node js based visual regression testing tool that is built using express js.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Saniyaj Mallik",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "fs-extra": "^11.3.0",
+    "pixelmatch": "^7.1.0",
+    "puppeteer": "^24.10.2",
+    "sharp": "^0.34.2",
+    "uuid": "^11.1.0"
+  }
+}

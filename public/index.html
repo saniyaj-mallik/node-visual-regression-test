@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visual Regression Test Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    .images { display: flex; gap: 2em; }
+    .images img { max-width: 400px; border: 1px solid #ccc; }
+    .label { text-align: center; margin-top: 0.5em; }
+  </style>
+</head>
+<body>
+  <h1>Visual Regression Test Report</h1>
+  <form id="compareForm">
+    <label>Reference URL: <input type="url" name="refUrl" required></label><br><br>
+    <label>Test URL: <input type="url" name="testUrl" required></label><br><br>
+    <label>Viewport Width: <input type="number" name="width" value="1280" required></label><br><br>
+    <label>Viewport Height: <input type="number" name="height" value="800" required></label><br><br>
+    <button type="submit">Compare</button>
+  </form>
+  <div id="loading" style="display:none; color: #007bff; font-weight: bold;">Generating report, please wait...</div>
+  <div id="result"></div>
+  <script>
+    document.getElementById('compareForm').onsubmit = async function(e) {
+      e.preventDefault();
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('result').innerHTML = '';
+      const form = e.target;
+      const payload = {
+        refUrl: form.refUrl.value,
+        testUrl: form.testUrl.value,
+        viewport: {
+          width: parseInt(form.width.value, 10),
+          height: parseInt(form.height.value, 10)
+        }
+      };
+      const res = await fetch('/api/compare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      document.getElementById('loading').style.display = 'none';
+      if (data.error) {
+        document.getElementById('result').innerHTML = `<p style='color:red;'>${data.error}</p>`;
+        return;
+      }
+      document.getElementById('result').innerHTML = `
+        <h2>Diff: ${data.diffPercentage}%</h2>
+        <div class="images">
+          <div><img src="${data.refImageUrl}"><div class="label">Reference</div></div>
+          <div><img src="${data.testImageUrl}"><div class="label">Test</div></div>
+          <div><img src="${data.diffImageUrl}"><div class="label">Diff</div></div>
+        </div>
+      `;
+    };
+  </script>
+</body>
+</html>
