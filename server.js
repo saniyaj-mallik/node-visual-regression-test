@@ -29,7 +29,12 @@ app.post('/api/compare', async (req, res) => {
 
   let browser;
   try {
+    // Use environment variable for Chrome executable if set
+    const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+    console.log('Using Chrome executable at:', executablePath);
+
     browser = await puppeteer.launch({
+      executablePath: executablePath || undefined,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
     const page = await browser.newPage();
